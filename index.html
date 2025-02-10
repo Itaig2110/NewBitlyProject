@@ -97,44 +97,43 @@
     <div class="container">
         <h1>Url Shortener</h1>
         <form id="short-form">
-            <label for="originalUrl"></label>
+            <label for="originalUrl">Enter URL:</label>
             <input type="url" id="originalUrl" name="originalUrl" required placeholder="e.g. http://example.com">
-            <button type="submit">Short Url</button>
+            <button type="submit">Shorten URL</button>
         </form>
         <div id="result"></div>
     </div>
     <script>
-        const API_URL = "https://newbitlyproject2.onrender.com"; // שים כאן את ה-URL של Render
+        const API_URL = "https://newbitlyproject2.onrender.com"; // ה-URL של Render
 
         document.getElementById('short-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
+            e.preventDefault(); // מונע את הרענון אוטומטי של הדף
             const urlInput = document.getElementById('originalUrl');
             const originalUrl = urlInput.value;
 
             if (!originalUrl) {
-                document.getElementById('result').innerHTML = `Error: Please provide a URL`;
+                document.getElementById('result').innerHTML = `Error: Please provide a valid URL.`;
                 return;
             }
 
             try {
-                const response = await fetch(`${API_URL}/link/shorten`, { // שימוש ב-URL של Render
+                const response = await fetch(`${API_URL}/link/shorten`, { 
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ originalUrl })
                 });
 
                 const result = await response.json();
-                console.log(result);
-
+                
                 if (!response.ok) {
-                    throw new Error(result.error || "An error occurred");
+                    throw new Error(result.error || "An error occurred while shortening the URL.");
                 }
 
-                // עדכון הכתובת המקוצרת עם הדומיין של Render
                 const shortUrl = result.shortUrl.startsWith('http') ? result.shortUrl : `${API_URL}/link/${result.shortUrl}`;
 
                 document.getElementById("result").innerHTML = `
                 <p>Short URL: <a href="${shortUrl}" target="_blank">${shortUrl}</a></p>`;
+
             } catch (error) {
                 console.log('Error:', error.message);
                 document.getElementById('result').innerHTML = `Error: ${error.message}`;
