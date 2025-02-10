@@ -104,32 +104,35 @@
         <div id="result"></div>
     </div>
     <script>
+        const API_URL = "https://newbitlyproject2.onrender.com"; // שים כאן את ה-URL של Render
+
         document.getElementById('short-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const urlInput = document.getElementById('originalUrl');
             const originalUrl = urlInput.value;
-            
+
             if (!originalUrl) {
                 document.getElementById('result').innerHTML = `Error: Please provide a URL`;
                 return;
             }
-            
+
             try {
-                const response = await fetch('/link/shorten', {
+                const response = await fetch(`${API_URL}/link/shorten`, { // שימוש ב-URL של Render
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ originalUrl })
                 });
-                
+
                 const result = await response.json();
                 console.log(result);
-                
+
                 if (!response.ok) {
                     throw new Error(result.error || "An error occurred");
                 }
-                
-                const shortUrl = result.shortUrl.startsWith('http') ? result.shortUrl : `http://localhost:5555/link/${result.shortUrl}`;
-                
+
+                // עדכון הכתובת המקוצרת עם הדומיין של Render
+                const shortUrl = result.shortUrl.startsWith('http') ? result.shortUrl : `${API_URL}/link/${result.shortUrl}`;
+
                 document.getElementById("result").innerHTML = `
                 <p>Short URL: <a href="${shortUrl}" target="_blank">${shortUrl}</a></p>`;
             } catch (error) {
